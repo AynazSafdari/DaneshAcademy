@@ -1,0 +1,8 @@
+@media (min-width: 1025px) {
+  .admin-sidebar { position: sticky; right: auto; }
+  .admin-hamburger { display: none; }
+  .admin-overlay { display: none; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-lg); }
+  .form-row-2 { grid-template-columns: 1fr 1fr; }
+}

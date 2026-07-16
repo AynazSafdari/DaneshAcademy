@@ -1,0 +1,9 @@
+@media (min-width: 769px) and (max-width: 1024px) {
+  body { background: var(--pine); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-md); }
+  .admin-login-card { background: var(--white); border-radius: var(--radius-md); box-shadow: var(--shadow-lift); padding: var(--space-xl) var(--space-lg); max-width: 420px; width: 100%; }
+  .admin-login-card .mark { width: 56px; height: 56px; border-radius: var(--radius-sm); background: var(--pine); color: var(--saffron); display: flex; align-items: center; justify-content: center; font-size: 1.7rem; margin: 0 auto var(--space-md); transform: rotate(-4deg); box-shadow: 2px 3px 0 var(--saffron); }
+  .admin-login-card h1 { text-align: center; font-size: 1.4rem; }
+  .admin-login-card > p { text-align: center; margin-bottom: var(--space-lg); }
+  .back-link { display: block; text-align: center; margin-top: var(--space-md); color: var(--ink-soft); font-size: 0.88rem; }
+  .back-link:hover { color: var(--saffron-dark); }
+}

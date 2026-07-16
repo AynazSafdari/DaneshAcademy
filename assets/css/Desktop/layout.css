@@ -1,0 +1,4 @@
+@media (min-width: 1025px) {
+  .nav-links { position: static; height: auto; width: auto; }
+  .hamburger { display: none; }
+}

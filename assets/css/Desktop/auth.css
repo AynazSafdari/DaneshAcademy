@@ -1,0 +1,4 @@
+@media (min-width: 1025px) {
+  .auth-page { min-height: 80vh; display: flex; align-items: center; padding: var(--space-xl) 0; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+}

@@ -1,0 +1,11 @@
+@media (min-width: 769px) and (max-width: 1024px) {
+  .admin-sidebar { position: fixed; right: -100%; height: 100vh; box-shadow: var(--shadow-lift); }
+  .admin-sidebar.open { right: 0; }
+  .admin-hamburger { display: flex; flex-direction: column; gap: 5px; padding: 0.5rem; }
+  .admin-hamburger span { width: 22px; height: 2.5px; background: var(--pine); border-radius: 2px; }
+  .admin-overlay { position: fixed; inset: 0; background: rgba(27,58,52,0.4); z-index: 49; opacity: 0; pointer-events: none; transition: 0.3s; }
+  .admin-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .form-row-2 { grid-template-columns: 1fr 1fr; }
+}

@@ -1,0 +1,12 @@
+@media (min-width: 1025px) {
+  .article-wrap { max-width: 720px; margin: 0 auto; }
+  .article-hero-img { width: 100%; height: 340px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--space-lg); }
+  .article-meta-row { display: flex; gap: var(--space-md); align-items: center; margin: var(--space-md) 0 var(--space-lg); font-size: 0.9rem; color: var(--ink-soft); }
+  .article-meta-row .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--sage); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .article-body p { font-size: 1.05rem; line-height: 1.9; margin-bottom: 1.3rem; color: var(--ink); }
+  .related-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-top: var(--space-lg); }
+  .article-card-img { height: 150px; overflow: hidden; }
+  .article-card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .article-card-body { padding: var(--space-sm) var(--space-md) var(--space-md); padding-right: calc(var(--space-md) + 14px); position: relative; z-index: 2; }
+  .article-card-body h3 { font-size: 0.98rem; margin-top: 0.5rem; }
+}

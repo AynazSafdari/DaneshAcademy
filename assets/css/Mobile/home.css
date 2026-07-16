@@ -1,0 +1,139 @@
+@media (max-width: 768px) {
+  .hero {
+    position: relative;
+    padding: var(--space-2xl) 0 calc(var(--space-2xl) + 2rem);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 38px, rgba(27,58,52,0.045) 39px);
+    z-index: 0;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 { margin-bottom: var(--space-sm); }
+  .hero h1 .underline { position: relative; color: var(--saffron-dark); }
+  .hero h1 .underline svg { position: absolute; bottom: -8px; right: 0; width: 100%; height: 12px; }
+  .hero-lead { font-size: 1.12rem; max-width: 480px; margin-bottom: var(--space-md); }
+  .hero-cta { display: flex; gap: 0.9rem; align-items: center; margin-bottom: var(--space-lg); flex-wrap: wrap; }
+  .hero-stats { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+  .hero-stats .stat b { display: block; font-family: var(--font-display); font-size: 1.7rem; color: var(--pine); }
+  .hero-stats .stat span { font-size: 0.82rem; color: var(--ink-soft); }
+
+  .hero-visual { display: none; }
+
+  /* Category pills */
+  .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .cat-card {
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-sm);
+    text-align: center;
+    transition: 0.25s;
+  }
+  .cat-card:hover { border-color: var(--saffron); transform: translateY(-4px); box-shadow: var(--shadow-card); }
+  .cat-card .ic { font-size: 1.8rem; display: block; margin-bottom: 0.5rem; }
+  .cat-card .name { font-weight: 700; font-size: 0.92rem; color: var(--pine); }
+  .cat-card .cnt { font-size: 0.78rem; color: var(--ink-soft); }
+
+  /* Course grid → اسلایدر در موبایل */
+  .course-grid.slider-track {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: var(--space-sm);
+    padding-bottom: 0.5rem;
+  }
+  .course-grid.slider-track > * { flex: 0 0 86%; scroll-snap-align: start; }
+  .course-card-img { position: relative; height: 160px; overflow: hidden; }
+  .course-card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .course-card-img .badge-level { position: absolute; top: 12px; right: 12px; background: var(--white); }
+  .course-card-body { padding: var(--space-sm) var(--space-md) var(--space-md); position: relative; z-index: 2; padding-right: calc(var(--space-md) + 14px); }
+  .course-cat { font-size: 0.78rem; color: var(--sage-dark); font-weight: 700; margin-bottom: 0.3rem; }
+  .course-title-link { font-weight: 700; font-size: 1rem; color: var(--pine); display: block; margin-bottom: 0.4rem; line-height: 1.5; }
+  .course-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 0.8rem; }
+  .course-meta .star { color: var(--saffron-dark); font-weight: 700; }
+  .course-price-row { display: flex; align-items: center; justify-content: space-between; }
+  .price-now { font-weight: 800; color: var(--pine); font-size: 1rem; }
+  .price-old { font-size: 0.8rem; color: var(--ink-soft); text-decoration: line-through; margin-right: 0.4rem; }
+
+  /* Why us */
+  .why-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-md); }
+  .why-item { display: flex; gap: var(--space-sm); align-items: flex-start; }
+  .why-item .ic {
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    background: var(--sand); display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+
+  /* Testimonials → اسلایدر در موبایل */
+  .testi-row.slider-track {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: var(--space-sm);
+    padding-bottom: 0.5rem;
+  }
+  .testi-row.slider-track > * { flex: 0 0 86%; scroll-snap-align: start; }
+  .testi-card { background: var(--white); border-radius: var(--radius-md); padding: var(--space-lg); box-shadow: var(--shadow-card); position: relative; }
+  .testi-card .quote-mark { font-family: var(--font-display); font-size: 3rem; color: var(--sand-dark); line-height: 1; margin-bottom: 0.5rem; }
+  .testi-person { display: flex; align-items: center; gap: 0.7rem; margin-top: var(--space-md); }
+  .testi-person .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--sage); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+  .testi-person b { display: block; font-size: 0.9rem; color: var(--pine); }
+  .testi-person span { font-size: 0.78rem; color: var(--ink-soft); }
+
+  /* Article preview row → اسلایدر در موبایل */
+  .article-row.slider-track {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: var(--space-sm);
+    padding-bottom: 0.5rem;
+  }
+  .article-row.slider-track > * { flex: 0 0 86%; scroll-snap-align: start; }
+  .article-card-img { height: 170px; overflow: hidden; }
+  .article-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .ledger-card:hover .article-card-img img { transform: scale(1.06); }
+  .article-card-body { padding: var(--space-md); padding-right: calc(var(--space-md) + 14px); position: relative; z-index: 2; }
+  .article-card-body .tag { margin-bottom: 0.6rem; }
+  .article-card-body h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .article-card-body p { font-size: 0.9rem; }
+  .article-card-meta { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--ink-soft); margin-top: var(--space-sm); }
+
+  /* فلش‌ها در موبایل پنهان می‌شوند (لمسی کافیست)، فقط نقاط نمایش داده می‌شود */
+  .slider-wrap { position: relative; }
+  .slider-arrow { display: none; }
+  .slider-dots { display: flex; justify-content: center; gap: 0.4rem; margin-top: var(--space-sm); }
+  .slider-dots .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sand-dark); transition: 0.2s; }
+  .slider-dots .dot.active { background: var(--saffron); width: 18px; border-radius: 4px; }
+
+  /* CTA band */
+  .cta-band {
+    background: var(--pine);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl) var(--space-lg);
+    display: flex; flex-direction: column; text-align: center; align-items: center; justify-content: center; gap: var(--space-lg);
+    position: relative; overflow: hidden;
+  }
+  .cta-band::before {
+    content: ''; position: absolute; left: -60px; top: -60px; width: 220px; height: 220px;
+    background: var(--saffron); opacity: 0.18; border-radius: 50%;
+  }
+  .cta-band h2 { color: var(--cream); margin-bottom: 0.4rem; }
+  .cta-band p { color: rgba(246,241,228,0.7); }
+}

@@ -1,0 +1,43 @@
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+:root {
+  /* Color */
+  --pine: #1B3A34;
+  --pine-light: #28524A;
+  --cream: #F6F1E4;
+  --cream-soft: #EFE8D6;
+  --sand: #E8E1D0;
+  --sand-dark: #D9CFB6;
+  --saffron: #D97B4F;
+  --saffron-dark: #C2602F;
+  --ink: #2D2A26;
+  --ink-soft: #5A564E;
+  --sage: #7A9E8E;
+  --sage-dark: #5E8473;
+  --line: #C7BCA0;
+  --danger: #B3492F;
+  --white: #FFFDF8;
+
+  /* Type */
+  --font-display: 'Vazirmatn', sans-serif;
+  --font-body: 'Vazirmatn', sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Shadow */
+  --shadow-card: 0 2px 8px rgba(27, 58, 52, 0.08), 0 1px 2px rgba(27, 58, 52, 0.06);
+  --shadow-card-hover: 0 8px 24px rgba(27, 58, 52, 0.14), 0 2px 6px rgba(27, 58, 52, 0.08);
+  --shadow-lift: 0 16px 40px rgba(27, 58, 52, 0.18);
+
+  --max-width: 1240px;
+}
