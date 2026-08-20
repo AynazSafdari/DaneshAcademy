@@ -136,4 +136,35 @@
   }
   .cta-band h2 { color: var(--cream); margin-bottom: 0.4rem; }
   .cta-band p { color: rgba(246,241,228,0.7); }
+
+  /* کارت‌های رتبه‌بندی اساتید در صفحه اصلی */
+  .teacher-rank-grid.slider-track {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: var(--space-sm);
+    padding-bottom: 0.5rem;
+  }
+  .teacher-rank-grid.slider-track > * { flex: 0 0 86%; scroll-snap-align: start; }
+  .teacher-rank-body { padding: var(--space-md); position: relative; z-index: 2; padding-right: calc(var(--space-md) + 14px); }
+  .teacher-rank-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .teacher-rank-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--sage); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.05rem;
+  }
+  .teacher-rank-body h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .teacher-rank-stats {
+    display: flex; justify-content: space-between;
+    margin: var(--space-sm) 0; padding: 0.7rem 0;
+    border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+  }
+  .teacher-rank-stats > div { text-align: center; }
+  .teacher-rank-stats b { display: block; font-family: var(--font-display); font-size: 1.15rem; color: var(--pine); }
+  .teacher-rank-stats span { font-size: 0.75rem; color: var(--ink-soft); }
+  .teacher-rank-score { display: flex; justify-content: space-between; align-items: center; }
+  .teacher-rank-score .star { color: var(--saffron-dark); font-weight: 700; }
 }

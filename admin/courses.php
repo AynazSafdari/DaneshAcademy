@@ -9,10 +9,10 @@ $editId = (int) ($_GET['edit'] ?? 0);
 $message = null;
 $messageType = 'success';
 
-
+// --- دریافت دسته‌بندی‌ها برای فرم ---
 $categories = $pdo->query("SELECT * FROM categories ORDER BY id")->fetchAll();
 
-
+/*  CREATE / UPDATE  */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     $id = (int) ($_POST['id'] ?? 0);
     $title = trim($_POST['title'] ?? '');
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     if ($summary === '') $errors[] = 'توضیح کوتاه را وارد کنید.';
     if ($description === '') $errors[] = 'توضیحات کامل را وارد کنید.';
 
-    
+    // در حالت ویرایش، اگر عکس جدید آپلود نشود، عکس قبلی حفظ می‌شود
     $oldImage = null;
     if ($id > 0) {
         $stmt = $pdo->prepare("SELECT image FROM courses WHERE id = ?");
@@ -59,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             $stmt->execute([$title, $categoryId, $instructor, $level, $price, $oldPrice, $hours, $lessons, $imageToSave, $summary, $description, $syllabus, $featured, $id]);
             $message = 'دوره با موفقیت ویرایش شد.';
         } else {
-            // --- CREATE ---
+            // --- CREATE (دوره‌ای که مستقیم توسط ادمین ساخته می‌شود، فوراً approved است) ---
             $stmt = $pdo->prepare("
                 INSERT INTO courses
-                (title, category_id, instructor, level, price, old_price, hours, lessons, image, summary, description, syllabus, featured, rating, students)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 4.5, 0)
+                (title, category_id, instructor, status, level, price, old_price, hours, lessons, image, summary, description, syllabus, featured, rating, students)
+                VALUES (?, ?, ?, 'approved', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 4.5, 0)
             ");
             $stmt->execute([$title, $categoryId, $instructor, $level, $price, $oldPrice, $hours, $lessons, $imageToSave, $summary, $description, $syllabus, $featured]);
             $message = 'دوره جدید با موفقیت اضافه شد.';
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
         $messageType = 'danger';
         $action = $id > 0 ? 'edit' : 'create';
         $editId = $id;
-      
+        // برای نمایش مقادیر واردشده در فرم پس از خطا
         $formData = $_POST;
     }
 }
@@ -97,7 +97,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
     $action = 'list';
 }
 
-
+/*  داده برای فرم ویرایش */
 $editCourse = null;
 if (($action === 'edit') && $editId > 0) {
     $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
@@ -123,8 +123,7 @@ if (!empty($formData) && $action === 'edit') {
     ];
 }
 
-
-
+/*  لیست دوره‌ها (با جستجو) */
 $search = trim($_GET['q'] ?? '');
 if ($search !== '') {
     $stmt = $pdo->prepare("
@@ -159,8 +158,7 @@ require __DIR__ . '/includes_header.php';
 <?php endif; ?>
 
 <?php if ($showForm): ?>
-
-
+<!--  فرم افزودن / ویرایش دوره  -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3><?= $editCourse && $editCourse['id'] ? 'ویرایش دوره' : 'افزودن دوره جدید' ?></h3>
@@ -263,7 +261,7 @@ require __DIR__ . '/includes_header.php';
 </div>
 
 <?php else: ?>
-<!-- show -->
+<!--  لیست دوره‌ها (Show) -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3>لیست دوره‌ها (<?= count($courses) ?>)</h3>
@@ -274,12 +272,14 @@ require __DIR__ . '/includes_header.php';
   <div class="table-responsive">
     <table class="data-table">
       <thead>
-        <tr><th>دوره</th><th>دسته‌بندی</th><th>سطح</th><th>قیمت</th><th>دانشجویان</th><th>امتیاز</th><th>عملیات</th></tr>
+        <tr><th>دوره</th><th>دسته‌بندی</th><th>سطح</th><th>وضعیت</th><th>قیمت</th><th>دانشجویان</th><th>امتیاز</th><th>عملیات</th></tr>
       </thead>
       <tbody>
         <?php if (empty($courses)): ?>
-        <tr class="empty-row"><td colspan="7">دوره‌ای یافت نشد.</td></tr>
-        <?php else: foreach ($courses as $c): ?>
+        <tr class="empty-row"><td colspan="8">دوره‌ای یافت نشد.</td></tr>
+        <?php else: foreach ($courses as $c):
+          $statusLabel = ['pending' => 'در انتظار تایید', 'approved' => 'تاییدشده', 'rejected' => 'رد‌شده'][$c['status']];
+        ?>
         <tr>
           <td>
             <div class="row-title-cell">
@@ -289,6 +289,7 @@ require __DIR__ . '/includes_header.php';
           </td>
           <td><?= h($c['category_name']) ?></td>
           <td><span class="badge-level"><?= h($c['level']) ?></span></td>
+          <td><span class="status-badge status-<?= $c['status'] ?>"><?= $statusLabel ?></span></td>
           <td><?= fmt_price($c['price']) ?></td>
           <td><?= number_format($c['students']) ?></td>
           <td>★ <?= h($c['rating']) ?></td>
@@ -305,7 +306,7 @@ require __DIR__ . '/includes_header.php';
   </div>
 </div>
 
-<!-- delete modal -->
+
 <div class="modal-overlay" id="deleteModal">
   <div class="modal-box u-modal-box-sm">
     <div class="modal-body confirm-box">

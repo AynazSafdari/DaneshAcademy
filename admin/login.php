@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <button type="submit" class="btn btn-primary btn-block">ورود به پنل مدیریت</button>
   </form>
-  <div class="demo-hint">نام کاربری: <b>admin</b> &nbsp;|&nbsp; رمز عبور: <b>admin123</b></div>
   <a href="../index.php" class="back-link">← بازگشت به سایت</a>
 </div>
 

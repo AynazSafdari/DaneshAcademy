@@ -8,18 +8,18 @@ require_once __DIR__ . '/includes/functions.php';
 
 $categories = $pdo->query("SELECT * FROM categories ORDER BY id")->fetchAll();
 foreach ($categories as &$cat) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE category_id = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE category_id = ? AND status = 'approved'");
     $stmt->execute([$cat['id']]);
     $cat['count'] = $stmt->fetchColumn();
 }
 
-// filters
+
 $selectedCats = isset($_GET['cat']) ? array_map('intval', (array)$_GET['cat']) : [];
 $selectedLevels = isset($_GET['level']) ? (array)$_GET['level'] : [];
 $search = trim($_GET['q'] ?? '');
 $sort = $_GET['sort'] ?? 'popular';
 
-$where = [];
+$where = ["c.status = 'approved'"];
 $params = [];
 
 if (!empty($selectedCats)) {
@@ -45,6 +45,7 @@ $orderSql = match ($sort) {
     'price-low' => 'c.price ASC',
     'price-high' => 'c.price DESC',
     'rating' => 'c.rating DESC',
+    'teacher-rank' => 'c.students DESC', 
     default => 'c.students DESC',
 };
 
@@ -58,6 +59,22 @@ $sql = "
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $courses = $stmt->fetchAll();
+
+// --- مرتب‌سازی بر اساس رتبه استاد  ---
+if ($sort === 'teacher-rank') {
+    require_once __DIR__ . '/includes/ranking.php';
+    $teacherRankings = calculate_teacher_rankings($pdo);
+    $teacherScoreMap = [];
+    foreach ($teacherRankings as $t) {
+        $teacherScoreMap[(int) $t['id']] = $t['final_score'];
+    }
+
+    usort($courses, function ($a, $b) use ($teacherScoreMap) {
+        $scoreA = isset($a['teacher_id']) && $a['teacher_id'] ? ($teacherScoreMap[(int) $a['teacher_id']] ?? -1) : -1;
+        $scoreB = isset($b['teacher_id']) && $b['teacher_id'] ? ($teacherScoreMap[(int) $b['teacher_id']] ?? -1) : -1;
+        return $scoreB <=> $scoreA;
+    });
+}
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -109,6 +126,7 @@ require __DIR__ . '/includes/header.php';
             <option value="price-low" <?= $sort === 'price-low' ? 'selected' : '' ?>>ارزان‌ترین</option>
             <option value="price-high" <?= $sort === 'price-high' ? 'selected' : '' ?>>گران‌ترین</option>
             <option value="rating" <?= $sort === 'rating' ? 'selected' : '' ?>>بالاترین امتیاز</option>
+            <option value="teacher-rank" <?= $sort === 'teacher-rank' ? 'selected' : '' ?>>بر اساس رتبه استاد</option>
           </select>
         </div>
         <p class="result-count u-mb-1"><?= count($courses) ?> دوره یافت شد</p>
@@ -132,6 +150,9 @@ require __DIR__ . '/includes/header.php';
               <div class="course-cat"><?= h($c['category_name']) ?></div>
               <a href="course-detail.php?id=<?= (int)$c['id'] ?>" class="course-title-link"><?= h($c['title']) ?></a>
               <div class="course-meta"><span class="star">★ <?= h($c['rating']) ?></span><span>· <?= number_format($c['students']) ?> دانشجو</span><span>· <?= (int)$c['hours'] ?> ساعت</span></div>
+              <?php if ($sort === 'teacher-rank' && !empty($c['teacher_id']) && isset($teacherScoreMap[(int)$c['teacher_id']])): ?>
+              <div class="course-teacher-rank-hint">رتبه استاد: <b><?= $teacherScoreMap[(int)$c['teacher_id']] ?></b> از ۱۰۰</div>
+              <?php endif; ?>
               <div class="course-price-row">
                 <div><?php if ($c['old_price'] > 0): ?><span class="price-old"><?= fmt_price($c['old_price']) ?></span><?php endif; ?><span class="price-now"><?= fmt_price($c['price']) ?></span></div>
               </div>

@@ -60,7 +60,7 @@ require __DIR__ . '/includes/header.php';
         <button type="submit" class="btn btn-primary btn-block">ورود</button>
       </form>
       <div class="auth-switch">حساب کاربری ندارید؟ <a href="signup.php">ثبت‌نام کنید</a></div>
-      <div class="demo-hint">برای ورود ادمین، از <b>صفحه ورود مدیر</b> استفاده کنید.</div>
+      <div class="demo-hint">استاد هستید؟ از <a href="teacher/login.php">صفحه ورود استاد</a> استفاده کنید.</div>
     </div>
   </div>
 </section>

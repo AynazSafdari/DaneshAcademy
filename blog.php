@@ -8,13 +8,13 @@ require_once __DIR__ . '/includes/functions.php';
 
 $activeCat = $_GET['cat'] ?? 'همه';
 
-$categories = $pdo->query("SELECT DISTINCT category FROM articles ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
+$categories = $pdo->query("SELECT DISTINCT category FROM articles WHERE status = 'approved' ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
 
 if ($activeCat !== 'همه') {
-    $stmt = $pdo->prepare("SELECT * FROM articles WHERE category = ? ORDER BY created_at DESC");
+    $stmt = $pdo->prepare("SELECT * FROM articles WHERE category = ? AND status = 'approved' ORDER BY created_at DESC");
     $stmt->execute([$activeCat]);
 } else {
-    $stmt = $pdo->query("SELECT * FROM articles ORDER BY created_at DESC");
+    $stmt = $pdo->query("SELECT * FROM articles WHERE status = 'approved' ORDER BY created_at DESC");
 }
 $articles = $stmt->fetchAll();
 

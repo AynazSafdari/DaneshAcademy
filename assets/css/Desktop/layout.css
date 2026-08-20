@@ -1,4 +1,14 @@
 @media (min-width: 1025px) {
-  .nav-links { position: static; height: auto; width: auto; }
+  .nav-links {
+    position: fixed;
+    top: 6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    width: auto;
+    z-index: 100;
+  }
   .hamburger { display: none; }
 }
+
+.nav-close{display: none;}

@@ -44,7 +44,7 @@ require __DIR__ . '/includes_header.php';
 <?php endif; ?>
 
 <?php if ($viewMessage): ?>
-
+<!--  نمایش جزئیات پیام  -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3>جزئیات پیام</h3>
@@ -65,7 +65,7 @@ require __DIR__ . '/includes_header.php';
 </div>
 
 <?php else: ?>
-
+<!--  لیست پیام‌ها (Show) -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3>پیام‌های دریافتی (<?= count($messages) ?>)</h3>

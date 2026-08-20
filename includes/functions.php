@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 function fmt_price($n) {
@@ -10,7 +11,6 @@ function fmt_price($n) {
 function fmt_date($datetime) {
     $months = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
     $ts = strtotime($datetime);
-
     return date("Y/m/d", $ts);
 }
 
@@ -26,8 +26,30 @@ function is_admin() {
     return is_logged_in() && $_SESSION['user']['role'] === 'admin';
 }
 
+function is_teacher() {
+    return is_logged_in() && $_SESSION['user']['role'] === 'teacher';
+}
+
 function require_admin($redirect = 'login.php') {
     if (!is_admin()) {
+        header("Location: $redirect");
+        exit;
+    }
+}
+
+function require_teacher($redirect = 'login.php') {
+    global $pdo;
+    if (!is_teacher()) {
+        header("Location: $redirect");
+        exit;
+    }
+    // بررسی مجدد وضعیت از دیتابیس؛ اگر ادمین بعد از ورود استاد، وضعیتش را تغییر داده باشد
+    // (مثلاً به pending یا rejected)، جلسه او بلافاصله باطل می‌شود
+    $stmt = $pdo->prepare("SELECT status FROM users WHERE id = ? AND role = 'teacher'");
+    $stmt->execute([$_SESSION['user']['id']]);
+    $currentStatus = $stmt->fetchColumn();
+    if ($currentStatus !== 'approved') {
+        unset($_SESSION['user']);
         header("Location: $redirect");
         exit;
     }
@@ -40,16 +62,11 @@ function require_login($redirect = '../login.php') {
     }
 }
 
-/**
- * آپلود تصویر و بازگرداندن مسیر نسبی ذخیره‌شده
- * @param string $field نام فیلد فرم (مثلاً 'image')
- * @param string $targetDir پوشه مقصد نسبت به ریشه سایت (مثلاً 'images/courses/')
- * @param string|null $oldImage مسیر تصویر قبلی (برای حذف هنگام ویرایش)
- * @return string|null مسیر تصویر جدید، یا null اگر فایلی آپلود نشده
- */
+
+// image
 function handle_image_upload($field, $targetDir, $oldImage = null) {
     if (!isset($_FILES[$field]) || $_FILES[$field]['error'] === UPLOAD_ERR_NO_FILE) {
-        return null; 
+        return null; // فایلی انتخاب نشده؛ تصویر قبلی حفظ می‌شود
     }
 
     if ($_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
@@ -74,7 +91,7 @@ function handle_image_upload($field, $targetDir, $oldImage = null) {
     $destination = $fullTargetDir . $newName;
 
     if (move_uploaded_file($_FILES[$field]['tmp_name'], $destination)) {
-  
+        // حذف تصویر قبلی در صورت وجود و متفاوت بودن از پیش‌فرض
         if ($oldImage && strpos($oldImage, 'default-') === false) {
             $oldFullPath = $rootDir . '/' . $oldImage;
             if (file_exists($oldFullPath)) {
@@ -98,4 +115,24 @@ function flash_get($key) {
         return $msg;
     }
     return null;
+}
+
+
+// bookmark
+function is_bookmarked(PDO $pdo, int $userId, string $contentType, int $contentId): bool {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookmarks WHERE user_id = ? AND content_type = ? AND content_id = ?");
+    $stmt->execute([$userId, $contentType, $contentId]);
+    return ((int) $stmt->fetchColumn()) > 0;
+}
+
+
+function toggle_bookmark(PDO $pdo, int $userId, string $contentType, int $contentId): bool {
+    if (is_bookmarked($pdo, $userId, $contentType, $contentId)) {
+        $stmt = $pdo->prepare("DELETE FROM bookmarks WHERE user_id = ? AND content_type = ? AND content_id = ?");
+        $stmt->execute([$userId, $contentType, $contentId]);
+        return false;
+    }
+    $stmt = $pdo->prepare("INSERT INTO bookmarks (user_id, content_type, content_id) VALUES (?, ?, ?)");
+    $stmt->execute([$userId, $contentType, $contentId]);
+    return true;
 }

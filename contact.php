@@ -47,12 +47,12 @@ require __DIR__ . '/includes/header.php';
         <h3>راه‌های ارتباطی</h3>
         <div class="info-row"><span class="ic">📍</span><div><b>آدرس</b><span>تهران، خیابان آزادی، نرسیده به میدان آزادی</span></div></div>
         <div class="info-row"><span class="ic">📞</span><div><b>تلفن</b><span>۰۲۱-۱۲۳۴۵۶۷۸</span></div></div>
-        <div class="info-row"><span class="ic">✉️</span><div><b>ایمیل</b><span>info@mehrabad-demo.ir</span></div></div>
+        <div class="info-row"><span class="ic">✉️</span><div><b>ایمیل</b><span>info@danesh.ir</span></div></div>
         <div class="info-row u-border-bottom-none"><span class="ic">⏰</span><div><b>ساعت پاسخگویی</b><span>شنبه تا چهارشنبه، ۹ تا ۱۸</span></div></div>
         <div class="social-row u-mt-1">
-          <a href="#" class="u-social-light">IG</a>
-          <a href="#" class="u-social-light">TG</a>
-          <a href="#" class="u-social-light">IN</a>
+          <a href="#" class="u-social-light"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="u-social-light"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" class="u-social-light"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
       </div>
 

@@ -12,13 +12,32 @@ if (is_logged_in()) {
     exit;
 }
 
+
+function safe_redirect_path(?string $path): string {
+    if (!$path) return 'index.php';
+
+    if (preg_match('#^(https?:)?//#i', $path) || str_starts_with($path, '\\\\')) {
+        return 'index.php';
+    }
+
+    if (!preg_match('#^[a-zA-Z0-9_\-./?=&%]+$#', $path)) {
+        return 'index.php';
+    }
+    return $path;
+}
+
+$redirectTarget = safe_redirect_path($_GET['redirect'] ?? $_POST['redirect'] ?? null);
+
 $errors = [];
-$old = ['first' => '', 'last' => '', 'email' => ''];
+$old = ['first' => '', 'last' => '', 'email' => '', 'role' => 'student', 'bio' => ''];
+$teacherPendingSuccess = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old['first'] = trim($_POST['first'] ?? '');
     $old['last'] = trim($_POST['last'] ?? '');
     $old['email'] = trim($_POST['email'] ?? '');
+    $old['role'] = in_array($_POST['role'] ?? '', ['student', 'teacher']) ? $_POST['role'] : 'student';
+    $old['bio'] = trim($_POST['bio'] ?? '');
     $pass = $_POST['password'] ?? '';
     $pass2 = $_POST['password2'] ?? '';
 
@@ -36,12 +55,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $fullName = $old['first'] . ' ' . $old['last'];
             $hash = password_hash($pass, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, username, password, role) VALUES (?, ?, ?, 'student')");
-            $stmt->execute([$fullName, $old['email'], $hash]);
 
-            $_SESSION['user'] = ['id' => $pdo->lastInsertId(), 'name' => $fullName, 'username' => $old['email'], 'role' => 'student'];
-            header("Location: index.php");
-            exit;
+            if ($old['role'] === 'teacher') {
+                // --- ثبت‌نام استاد: نیاز به تایید ادمین دارد، ورود خودکار انجام نمی‌شود ---
+                $bioToSave = $old['bio'] !== '' ? $old['bio'] : null;
+                $stmt = $pdo->prepare("INSERT INTO users (name, username, password, role, status, bio) VALUES (?, ?, ?, 'teacher', 'pending', ?)");
+                $stmt->execute([$fullName, $old['email'], $hash, $bioToSave]);
+
+                $teacherPendingSuccess = true;
+                $old = ['first' => '', 'last' => '', 'email' => '', 'role' => 'student', 'bio' => ''];
+            } else {
+                // --- ثبت‌نام دانشجو: بلافاصله وارد می‌شود ---
+                $stmt = $pdo->prepare("INSERT INTO users (name, username, password, role, status) VALUES (?, ?, ?, 'student', 'approved')");
+                $stmt->execute([$fullName, $old['email'], $hash]);
+
+                $_SESSION['user'] = ['id' => $pdo->lastInsertId(), 'name' => $fullName, 'username' => $old['email'], 'role' => 'student'];
+                header("Location: $redirectTarget");
+                exit;
+            }
         }
     }
 }
@@ -53,9 +84,35 @@ require __DIR__ . '/includes/header.php';
   <div class="container">
     <div class="auth-card u-max-w-480">
       <div class="mark">آ</div>
+      <?php if ($teacherPendingSuccess): ?>
+      <h1>درخواست شما ثبت شد</h1>
+      <p class="subtitle">حساب استادی شما در انتظار بررسی و تایید مدیر سایت است.</p>
+      <div class="pending-approval-box">
+        <span class="pending-approval-icon">⏳</span>
+        <p>پس از تایید توسط مدیر سایت، می‌توانید با همین ایمیل و رمز عبور از صفحه <a href="teacher/login.php" class="u-color-pine">ورود استاد</a> وارد پنل خود شوید. این فرآیند معمولاً کمتر از یک روز کاری زمان می‌برد.</p>
+      </div>
+      <a href="index.php" class="btn btn-outline btn-block u-mt-1">بازگشت به صفحه اصلی</a>
+      <?php else: ?>
       <h1>ساخت حساب کاربری</h1>
       <p class="subtitle">رایگان ثبت‌نام کنید و یادگیری را شروع کنید.</p>
       <form method="post" novalidate>
+        <input type="hidden" name="redirect" value="<?= h($redirectTarget) ?>">
+        <div class="field">
+          <label>ثبت‌نام به‌عنوان</label>
+          <div class="role-select-row">
+            <label class="role-option <?= $old['role'] === 'student' ? 'active' : '' ?>">
+              <input type="radio" name="role" value="student" <?= $old['role'] === 'student' ? 'checked' : '' ?>>
+              <span>🎓 دانشجو</span>
+            </label>
+            <label class="role-option <?= $old['role'] === 'teacher' ? 'active' : '' ?>">
+              <input type="radio" name="role" value="teacher" <?= $old['role'] === 'teacher' ? 'checked' : '' ?>>
+              <span>🧑 استاد</span>
+            </label>
+          </div>
+          <?php if ($old['role'] === 'teacher'): ?>
+          <p class="field-hint">ثبت‌نام استاد نیاز به بررسی و تایید مدیر سایت دارد و بلافاصله فعال نمی‌شود.</p>
+          <?php endif; ?>
+        </div>
         <div class="form-row-2">
           <div class="field <?= isset($errors['first']) ? 'has-error' : '' ?>">
             <label for="sFirst">نام</label>
@@ -84,11 +141,32 @@ require __DIR__ . '/includes/header.php';
           <input type="password" id="sPass2" name="password2">
           <span class="field-error"><?= h($errors['password2'] ?? '') ?></span>
         </div>
+        <div class="field <?= $old['role'] === 'teacher' ? '' : 'u-hidden' ?>" id="bioField">
+          <label for="sBio">بیوگرافی کوتاه (اختیاری، در پروفایل عمومی شما نمایش داده می‌شود)</label>
+          <textarea id="sBio" name="bio" placeholder="مثال: مدرس برنامه‌نویسی وب با ۵ سال سابقه صنعتی."><?= h($old['bio']) ?></textarea>
+        </div>
         <button type="submit" class="btn btn-primary btn-block">ثبت‌نام</button>
       </form>
       <div class="auth-switch">حساب کاربری دارید؟ <a href="login.php">وارد شوید</a></div>
+      <?php endif; ?>
     </div>
   </div>
 </section>
+
+<script>
+  document.querySelectorAll('.role-option input[name="role"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.role-option').forEach(el => el.classList.remove('active'));
+      radio.closest('.role-option').classList.add('active');
+
+      const bioField = document.getElementById('bioField');
+      if (radio.value === 'teacher') {
+        bioField.classList.remove('u-hidden');
+      } else {
+        bioField.classList.add('u-hidden');
+      }
+    });
+  });
+</script>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

@@ -5,9 +5,9 @@
         <div class="footer-logo">آکادمی دانش</div>
         <p>دفترچه یادگیری آنلاین شما؛ مسیری ساده برای رسیدن به مهارت‌های جدید.</p>
         <div class="social-row u-mt-1">
-          <a href="#" class="u-social-light" aria-label="اینستاگرام">IG</a>
-          <a href="#" class="u-social-light" aria-label="تلگرام">TG</a>
-          <a href="#" class="u-social-light" aria-label="لینکدین">IN</a>
+          <a href="#" class="u-social-light" aria-label="اینستاگرام"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="u-social-light" aria-label="تلگرام"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" class="u-social-light" aria-label="لینکدین"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
       </div>
       <div>
@@ -26,13 +26,12 @@
       <div>
         <h4>تماس با ما</h4>
         <p>تهران، خیابان آزادی</p>
-        <p>info@mehrabad-demo.ir</p>
+        <p>info@danesh.ir</p>
         <p>۰۲۱-۱۲۳۴۵۶۷۸</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© ۱۴۰۵ آکادمی دانش. تمامی حقوق محفوظ است. (پروژه نمایشی)</span>
-      <span>ساخته‌شده با 🤎 برای یادگیری</span>
+      <span>© ۱۴۰۵ آکادمی دانش. تمامی حقوق محفوظ است.</span>
     </div>
   </div>
 </footer>

@@ -10,14 +10,14 @@ $stmt = $pdo->prepare("
     SELECT c.*, cat.name AS category_name
     FROM courses c
     JOIN categories cat ON cat.id = c.category_id
-    WHERE c.id = ?
+    WHERE c.id = ? AND c.status = 'approved'
 ");
 $stmt->execute([$id]);
 $course = $stmt->fetch();
 
 $page_title = $course ? $course['title'] : 'دوره یافت نشد';
 
-// sabt nam dar dore
+// --- ثبت‌نام در دوره ---
 $enroll_message = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll']) && $course) {
     if (!is_logged_in()) {
@@ -38,6 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll']) && $course)
 }
 
 $syllabusItems = $course ? array_filter(array_map('trim', explode("\n", $course['syllabus']))) : [];
+
+$userBookmarked = false;
+if ($course && is_logged_in() && $_SESSION['user']['role'] === 'student') {
+    $userBookmarked = is_bookmarked($pdo, (int) $_SESSION['user']['id'], 'course', $course['id']);
+}
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -68,7 +73,11 @@ require __DIR__ . '/includes/header.php';
         </div>
         <div class="instructor-pill">
           <div class="avatar"><?= h(mb_substr($course['instructor'], -1)) ?></div>
+          <?php if (!empty($course['teacher_id'])): ?>
+          <div><a href="teacher-profile.php?id=<?= (int)$course['teacher_id'] ?>" class="u-color-pine u-fw-700"><?= h($course['instructor']) ?></a></div>
+          <?php else: ?>
           <div><strong class="u-color-pine"><?= h($course['instructor']) ?></strong></div>
+          <?php endif; ?>
         </div>
 
         <div class="detail-tabs-content">
@@ -91,6 +100,10 @@ require __DIR__ . '/includes/header.php';
         <form method="post">
           <button type="submit" name="enroll" value="1" class="btn btn-primary btn-block u-mt-1">ثبت‌نام در دوره</button>
         </form>
+        <button type="button" class="btn btn-outline btn-block u-mt-0_6 bookmark-btn" data-content-type="course" data-content-id="<?= (int)$course['id'] ?>" data-bookmarked="<?= $userBookmarked ? '1' : '0' ?>">
+          <i class="<?= $userBookmarked ? 'fa-solid' : 'fa-regular' ?> fa-bookmark bookmark-icon"></i>
+          <span class="bookmark-label"><?= $userBookmarked ? 'نشان‌شده — حذف از نشان‌ها' : 'نشان‌کردن این دوره' ?></span>
+        </button>
         <?php if ($enroll_message): ?>
           <p class="u-text-sm-soft u-mt-0_6"><?= h($enroll_message) ?></p>
         <?php endif; ?>

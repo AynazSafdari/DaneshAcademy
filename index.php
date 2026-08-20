@@ -8,7 +8,7 @@ require_once __DIR__ . '/includes/functions.php';
 
 $categories = $pdo->query("SELECT * FROM categories ORDER BY id")->fetchAll();
 foreach ($categories as &$cat) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE category_id = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE category_id = ? AND status = 'approved'");
     $stmt->execute([$cat['id']]);
     $cat['count'] = $stmt->fetchColumn();
 }
@@ -17,12 +17,15 @@ $featured = $pdo->query("
     SELECT c.*, cat.name AS category_name
     FROM courses c
     JOIN categories cat ON cat.id = c.category_id
-    WHERE c.featured = 1
+    WHERE c.featured = 1 AND c.status = 'approved'
     ORDER BY c.created_at DESC
     LIMIT 4
 ")->fetchAll();
 
-$articles = $pdo->query("SELECT * FROM articles ORDER BY created_at DESC LIMIT 3")->fetchAll();
+$articles = $pdo->query("SELECT * FROM articles WHERE status = 'approved' ORDER BY created_at DESC LIMIT 3")->fetchAll();
+
+require_once __DIR__ . '/includes/ranking.php';
+$topTeachers = array_slice(calculate_teacher_rankings($pdo), 0, 4);
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -91,7 +94,6 @@ require __DIR__ . '/includes/header.php';
       <div>
         <p class="eyebrow">پیشنهاد ویژه</p>
         <h2>دوره‌های محبوب</h2>
-        <p>دوره‌هایی که بیشترین استقبال دانشجویان را داشته‌اند.</p>
       </div>
       <a href="courses.php" class="btn btn-ghost">همه دوره‌ها ←</a>
     </div>
@@ -129,9 +131,57 @@ require __DIR__ . '/includes/header.php';
     </div>
     <div class="why-grid">
       <div class="why-item reveal"><div class="ic">📓</div><div><h3>یادگیری پروژه‌محور</h3><p>هر دوره با ساخت پروژه‌های واقعی همراه است، نه فقط تماشای ویدیو.</p></div></div>
-      <div class="why-item reveal delay-1"><div class="ic">🧑‍🏫</div><div><h3>مدرسان متخصص</h3><p>مدرسانی که خودشان سال‌ها در همان حوزه فعالیت حرفه‌ای داشته‌اند.</p></div></div>
+      <div class="why-item reveal delay-1"><div class="ic">🧑</div><div><h3>مدرسان متخصص</h3><p>مدرسانی که خودشان سال‌ها در همان حوزه فعالیت حرفه‌ای داشته‌اند.</p></div></div>
       <div class="why-item reveal delay-2"><div class="ic">🎓</div><div><h3>گواهی پایان دوره</h3><p>پس از اتمام هر دوره، گواهی معتبر برای رزومه شما صادر می‌شود.</p></div></div>
     </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">رتبه‌بندی اساتید</p>
+        <h2>با بهترین اساتید آکادمی دانش آشنا شوید</h2>
+      </div>
+      <a href="teachers.php" class="btn btn-ghost">جدول کامل رتبه‌بندی ←</a>
+    </div>
+
+    <?php if (empty($topTeachers)): ?>
+    <p class="u-text-sm-soft">هنوز استادی در سیستم ثبت نشده است.</p>
+    <?php else: ?>
+    <div class="slider-wrap">
+      <button type="button" class="slider-arrow prev" data-slider-prev="teacherSlider" aria-label="قبلی">‹</button>
+      <button type="button" class="slider-arrow next" data-slider-next="teacherSlider" aria-label="بعدی">›</button>
+      <div class="teacher-rank-grid slider-track" id="teacherSlider">
+        <?php foreach ($topTeachers as $t): ?>
+        <a href="teacher-profile.php?id=<?= (int)$t['id'] ?>" class="ledger-card reveal teacher-rank-card">
+          <div class="punch-holes"><span></span><span></span><span></span></div>
+          <div class="teacher-rank-body">
+            <div class="teacher-rank-top">
+              <span class="rank-badge <?= $t['rank'] <= 3 ? 'rank-' . $t['rank'] : '' ?>">#<?= $t['rank'] ?></span>
+              <div class="teacher-rank-avatar"><?= h(mb_substr($t['name'], -1)) ?></div>
+            </div>
+            <h3 class="u-color-pine"><?= h($t['name']) ?></h3>
+            <?php if (!empty($t['bio'])): ?>
+            <p class="u-text-sm-soft"><?= h($t['bio']) ?></p>
+            <?php endif; ?>
+            <div class="teacher-rank-stats">
+              <div><b><?= (int)$t['course_count'] ?></b><span>دوره</span></div>
+              <div><b><?= (int)$t['article_count'] ?></b><span>مقاله</span></div>
+              <div><b><?= number_format($t['total_students']) ?></b><span>دانشجو</span></div>
+            </div>
+            <div class="teacher-rank-score">
+              <span class="star">★ <?= $t['bayesian_teacher_rating'] ?></span>
+              <span class="u-text-sm-soft">امتیاز کل: <?= $t['final_score'] ?>/۱۰۰</span>
+            </div>
+          </div>
+        </a>
+        <?php endforeach; ?>
+      </div>
+      <div class="slider-dots" data-slider-dots="teacherSlider"></div>
+    </div>
+    <?php endif; ?>
   </div>
 </section>
 

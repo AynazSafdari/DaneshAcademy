@@ -3,25 +3,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelector('.nav-links');
   const overlay = document.querySelector('.nav-overlay');
 
-  if (hamburger && navLinks) {
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      overlay?.classList.toggle('open');
-      hamburger.classList.toggle('active');
-    });
+  function openNav() {
+    if (!navLinks) return;
+    navLinks.classList.add('open');
+    overlay && overlay.classList.add('open');
+    hamburger && hamburger.classList.add('hidden');
+    document.body.classList.add('nav-locked');
   }
+
+  function closeNav() {
+    if (!navLinks) return;
+    navLinks.classList.remove('open');
+    overlay && overlay.classList.remove('open');
+    hamburger && hamburger.classList.remove('hidden');
+    document.body.classList.remove('nav-locked');
+  }
+
+  if (hamburger) {
+    hamburger.addEventListener('click', openNav);
+  }
+
   if (overlay) {
-    overlay.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      overlay.classList.remove('open');
-      hamburger?.classList.remove('active');
-    });
+    overlay.addEventListener('click', closeNav);
   }
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => {
-      navLinks?.classList.remove('open');
-      overlay?.classList.remove('open');
-    });
+
+
+  document.addEventListener('click', (e) => {
+    const closeBtn = e.target.closest('.nav-close');
+    if (closeBtn) {
+      e.preventDefault();
+      closeNav();
+      return;
+    }
+    const navLink = e.target.closest('.nav-links a');
+    if (navLink) {
+      closeNav();
+    }
   });
 
   const revealEls = document.querySelectorAll('.reveal');
@@ -39,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     revealEls.forEach(el => el.classList.add('in-view'));
   }
 
- 
+
   const toastEl = document.querySelector('[data-flash-message]');
   if (toastEl) {
     const msg = toastEl.dataset.flashMessage;
@@ -48,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initSliders();
+  initBookmarks();
 });
+
 
 // slider
 function initSliders() {
@@ -85,7 +104,7 @@ function initSliders() {
       track.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
     }
 
-   
+
     prevBtn?.addEventListener('click', () => scrollByCard(1));
     nextBtn?.addEventListener('click', () => scrollByCard(-1));
 
@@ -110,4 +129,65 @@ function showToast(msg, isDanger) {
   toast.classList.add('show');
   clearTimeout(toast._t);
   toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+// bookmark
+function initBookmarks() {
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.bookmark-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1';
+
+    const contentType = btn.dataset.contentType;
+    const contentId = btn.dataset.contentId;
+
+    try {
+      const res = await fetch('bookmark-toggle.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `type=${encodeURIComponent(contentType)}&id=${encodeURIComponent(contentId)}`
+      });
+      const data = await res.json();
+
+      if (!data.ok) {
+        if (data.requiresAuth) {
+          showToast(data.message || 'برای نشان‌کردن ابتدا ثبت‌نام کنید.', true);
+          const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+          setTimeout(() => {
+            window.location.href = `signup.php?redirect=${returnUrl}`;
+          }, 900);
+        } else {
+          showToast(data.message || 'خطایی رخ داد.', true);
+        }
+        return;
+      }
+
+      const isBookmarked = data.bookmarked;
+      btn.setAttribute('data-bookmarked', isBookmarked ? '1' : '0');
+
+      const icon = btn.querySelector('.bookmark-icon');
+      const label = btn.querySelector('.bookmark-label');
+      if (icon) {
+        icon.classList.toggle('fa-solid', isBookmarked);
+        icon.classList.toggle('fa-regular', !isBookmarked);
+      }
+      if (label) {
+        const isInline = btn.classList.contains('u-inline-bookmark');
+        if (isInline) {
+          label.textContent = isBookmarked ? 'نشان‌شده' : 'نشان‌کردن';
+        } else {
+          label.textContent = isBookmarked ? 'نشان‌شده — حذف از نشان‌ها' : 'نشان‌کردن این دوره';
+        }
+      }
+
+      showToast(isBookmarked ? 'به نشان‌های شما اضافه شد.' : 'از نشان‌های شما حذف شد.');
+    } catch (err) {
+      showToast('خطا در ارتباط با سرور.', true);
+    } finally {
+      btn.dataset.loading = '0';
+    }
+  });
 }

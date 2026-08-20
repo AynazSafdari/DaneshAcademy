@@ -1,4 +1,8 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
 
 html {
   scroll-behavior: smooth;
@@ -24,6 +28,10 @@ body {
   overflow-x: hidden;
 }
 
+body.nav-locked {
+  overflow: hidden;
+}
+
 img { max-width: 100%; display: block; }
 
 a { color: inherit; text-decoration: none; }
@@ -38,7 +46,6 @@ input, textarea, select {
   color: inherit;
 }
 
-/* Background */
 .ledger-bg {
   background-image: repeating-linear-gradient(
     to bottom,
@@ -92,7 +99,7 @@ p { color: var(--ink-soft); }
   border-radius: 2px;
 }
 
-/*  Buttons  */
+/* ===== Buttons ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -121,6 +128,24 @@ p { color: var(--ink-soft); }
 }
 .btn-outline:hover { background: var(--pine); color: var(--cream); }
 
+.user-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--pine);
+  color: var(--pine);
+  font-size: 0.9rem;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+.user-panel-icon:hover {
+  background: var(--pine);
+  color: var(--cream);
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--pine);
@@ -134,10 +159,11 @@ p { color: var(--ink-soft); }
 .btn-danger { background: var(--danger); color: var(--white); box-shadow: 0 3px 0 #8A3621; }
 .btn-danger:hover { transform: translateY(-2px); }
 
-/*  Nav  */
+/* ===== Header / Nav ===== */
 .site-header {
   position: sticky;
   top: 0;
+  padding: 5px;
   z-index: 100;
   background: rgba(246, 241, 228, 0.92);
   backdrop-filter: blur(10px);
@@ -149,6 +175,7 @@ p { color: var(--ink-soft); }
   align-items: center;
   justify-content: space-between;
   padding: 1.1rem 0;
+  position: relative;
 }
 
 .logo {
@@ -223,7 +250,7 @@ p { color: var(--ink-soft); }
 }
 .nav-overlay.open { opacity: 1; pointer-events: auto; }
 
-/* Footer */
+/* ===== Footer ===== */
 .site-footer {
   background: var(--pine);
   color: var(--cream-soft);
@@ -277,11 +304,12 @@ p { color: var(--ink-soft); }
   border: 1px solid rgba(246,241,228,0.25);
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
   transition: 0.2s;
 }
 .social-row a:hover { background: var(--saffron); border-color: var(--saffron); }
 
-
+/* ===== Notebook ledger card (signature element) ===== */
 .ledger-card {
   position: relative;
   background: var(--white);
@@ -314,7 +342,7 @@ p { color: var(--ink-soft); }
   box-shadow: var(--shadow-card-hover);
 }
 
-
+/* punch holes — like a ring-binder card */
 .punch-holes {
   position: absolute;
   right: 9px;
@@ -331,7 +359,7 @@ p { color: var(--ink-soft); }
   box-shadow: inset 0 1px 2px rgba(27,58,52,0.25);
 }
 
-/*  Section helpers  */
+/* ===== Section helpers ===== */
 .section { padding: var(--space-2xl) 0; }
 .section-head {
   display: flex;
@@ -363,7 +391,7 @@ p { color: var(--ink-soft); }
   color: var(--ink-soft);
 }
 
-/*  Toast  */
+/* ===== Toast ===== */
 .toast {
   position: fixed;
   bottom: var(--space-lg);
@@ -384,7 +412,7 @@ p { color: var(--ink-soft); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.toast-danger { background: var(--danger); }
 
-/*  Scroll reveal  */
+/* ===== Scroll reveal ===== */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -398,7 +426,7 @@ p { color: var(--ink-soft); }
 
 [data-user-slot] { display: flex; align-items: center; gap: 0.6rem; }
 
-/*  Breadcrumb  */
+/* ===== Breadcrumb ===== */
 .breadcrumb {
   font-size: 0.88rem;
   color: var(--ink-soft);
@@ -410,7 +438,7 @@ p { color: var(--ink-soft); }
 .breadcrumb a { color: var(--sage-dark); font-weight: 600; }
 .breadcrumb a:hover { color: var(--saffron-dark); }
 
-/* Page hero  */
+/* ===== Page hero (sub-pages) ===== */
 .page-hero {
   background: var(--pine);
   padding: var(--space-xl) 0;
@@ -428,7 +456,7 @@ p { color: var(--ink-soft); }
 .page-hero .breadcrumb { color: rgba(246,241,228,0.6); position: relative; z-index: 1; }
 .page-hero .breadcrumb a { color: var(--saffron); }
 
-/*  Form elements  */
+/* ===== Form elements ===== */
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;
@@ -495,7 +523,129 @@ p { color: var(--ink-soft); }
 }
 .demo-hint b { color: var(--pine); }
 
+.pending-approval-box {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  background: var(--cream-soft);
+  border: 1px dashed var(--saffron);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-top: var(--space-md);
+}
+.pending-approval-icon { font-size: 1.6rem; flex-shrink: 0; }
+.pending-approval-box p { font-size: 0.88rem; color: var(--ink-soft); margin: 0; }
+.demo-hint a { color: var(--saffron-dark); font-weight: 700; }
 
+/* ===== انتخاب نقش هنگام ثبت‌نام (دانشجو/استاد) ===== */
+.role-select-row {
+  display: flex;
+  gap: 0.7rem;
+}
+.role-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  transition: 0.2s;
+}
+.role-option input { position: absolute; opacity: 0; pointer-events: none; }
+.role-option:hover { border-color: var(--saffron); }
+.role-option.active {
+  border-color: var(--saffron);
+  background: rgba(217, 123, 79, 0.08);
+  color: var(--pine);
+}
+
+/* ===== نشان وضعیت محتوا (در انتظار تایید / تاییدشده / رد‌شده) ===== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+}
+.status-badge.status-pending { background: rgba(217, 123, 79, 0.18); color: var(--saffron-dark); }
+.status-badge.status-approved { background: rgba(122, 158, 142, 0.2); color: var(--sage-dark); }
+.status-badge.status-rejected { background: rgba(179, 73, 47, 0.15); color: var(--danger); }
+
+/* ===== کارت رتبه‌بندی استاد ===== */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: var(--sand);
+  color: var(--pine);
+}
+.rank-badge.rank-1 { background: #F5C518; color: #3A2E00; }
+.rank-badge.rank-2 { background: #C7CDD6; color: #33383F; }
+.rank-badge.rank-3 { background: #D8A472; color: #3A2200; }
+
+.rank-summary-row { display: flex; align-items: center; gap: 1rem; }
+.rank-summary-row .rank-badge { width: 44px; height: 44px; font-size: 1.1rem; flex-shrink: 0; }
+
+.data-table tr.highlight-row td { background: rgba(217, 123, 79, 0.06); }
+
+.nav-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 100px;
+  background: var(--saffron);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin-right: auto;
+}
+
+/* ===== تب‌های صفحه اساتید و تایید محتوا ===== */
+.teacher-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+.teacher-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  transition: 0.2s;
+}
+.teacher-tab:hover { border-color: var(--saffron); }
+.teacher-tab.active {
+  background: var(--pine);
+  border-color: var(--pine);
+  color: var(--cream);
+}
+.teacher-tab .nav-pending-badge { margin-right: 0; }
+
+.u-inline-form { display: inline-flex; gap: 0.4rem; }
+
+/* ===== Utility classes (replacing inline styles) ===== */
 .u-bg-cream-soft { background: var(--cream-soft); }
 .u-border-bottom-none { border-bottom: none; }
 .u-social-light { border-color: rgba(246,241,228,0.25); color: var(--cream); }
@@ -531,3 +681,42 @@ p { color: var(--ink-soft); }
 .u-checkbox-18 { width: 18px; height: 18px; }
 .u-text-center { text-align: center; }
 .u-fw-700 { font-weight: 700; }
+
+/* کارت‌های استاد که به‌صورت لینک قابل‌کلیک هستند (صفحه اساتید) */
+.teacher-public-card { display: block; text-decoration: none; }
+.teacher-rank-card { display: block; text-decoration: none; }
+.teacher-public-view-link {
+  display: block;
+  margin-top: var(--space-sm);
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--line);
+  color: var(--saffron-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.teacher-public-card:hover .teacher-public-view-link { color: var(--pine); }
+
+/* دکمه نشان‌کردن دوره/مقاله */
+.bookmark-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.bookmark-btn .bookmark-icon { font-size: 1.1rem; color: var(--saffron-dark); transition: 0.15s; }
+.bookmark-btn[data-bookmarked="1"] {
+  background: rgba(217, 123, 79, 0.1);
+  border-color: var(--saffron);
+  color: var(--saffron-dark);
+}
+.u-inline-bookmark { margin-right: auto; white-space: nowrap; }
+
+.course-teacher-rank-hint {
+  font-size: 0.78rem;
+  color: var(--sage-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.course-teacher-rank-hint b { color: var(--pine); }
+
+.u-icon-cell { font-size: 1.3rem; }

@@ -1,0 +1,65 @@
+@media (max-width: 768px) {
+  .teacher-public-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .teacher-public-body {
+    padding: var(--space-md);
+    position: relative;
+    z-index: 2;
+    padding-right: calc(var(--space-md) + 14px);
+  }
+
+  .teacher-public-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+  }
+
+  .teacher-public-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--sage);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .teacher-public-body h3 { font-size: 1.02rem; margin-bottom: 0.4rem; }
+
+  .teacher-public-stats {
+    display: flex;
+    justify-content: space-between;
+    margin: var(--space-sm) 0;
+    padding: 0.65rem 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+  }
+  .teacher-public-stats > div { text-align: center; }
+  .teacher-public-stats b { display: block; font-family: var(--font-display); font-size: 1.05rem; color: var(--pine); }
+  .teacher-public-stats span { font-size: 0.72rem; color: var(--ink-soft); }
+
+  .teacher-public-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .teacher-public-score .star { color: var(--saffron-dark); font-weight: 700; display: block; margin-bottom: 0.2rem; }
+  .teacher-public-final { text-align: left; }
+  .teacher-public-final b { font-size: 1.2rem; font-family: var(--font-display); }
+
+  .teacher-formula-note {
+    margin-top: var(--space-lg);
+    padding: var(--space-md);
+    background: var(--cream-soft);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--line);
+  }
+}

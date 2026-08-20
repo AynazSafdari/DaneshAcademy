@@ -9,7 +9,7 @@ $editId = (int) ($_GET['edit'] ?? 0);
 $message = null;
 $messageType = 'success';
 
-// CREATE/UPDATE
+/* CREATE / UPDATE */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     $id = (int) ($_POST['id'] ?? 0);
     $title = trim($_POST['title'] ?? '');
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             $stmt->execute([$title, $category, $author, $imageToSave, $summary, $content, $id]);
             $message = 'مقاله با موفقیت ویرایش شد.';
         } else {
-            $stmt = $pdo->prepare("INSERT INTO articles (title, category, author, image, summary, content) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO articles (title, category, author, status, image, summary, content) VALUES (?, ?, ?, 'approved', ?, ?, ?)");
             $stmt->execute([$title, $category, $author, $imageToSave, $summary, $content]);
             $message = 'مقاله جدید با موفقیت اضافه شد.';
         }
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     }
 }
 
-// DELETE
+/* DELETE */
 if ($action === 'delete' && isset($_GET['id'])) {
     $id = (int) $_GET['id'];
     $stmt = $pdo->prepare("SELECT image FROM articles WHERE id = ?");
@@ -73,8 +73,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
     $action = 'list';
 }
 
-
-
+/*  edit form */
 $editArticle = null;
 if ($action === 'edit' && $editId > 0) {
     $stmt = $pdo->prepare("SELECT * FROM articles WHERE id = ?");
@@ -89,8 +88,7 @@ if (!empty($formData)) {
     ];
 }
 
-
-
+/*  لیست مقالات (با جستجو) */
 $search = trim($_GET['q'] ?? '');
 if ($search !== '') {
     $stmt = $pdo->prepare("SELECT * FROM articles WHERE title LIKE ? OR author LIKE ? ORDER BY created_at DESC");
@@ -116,8 +114,7 @@ require __DIR__ . '/includes_header.php';
 <?php endif; ?>
 
 <?php if ($showForm): ?>
-
-
+<!--  فرم افزودن / ویرایش مقاله  -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3><?= $editArticle && $editArticle['id'] ? 'ویرایش مقاله' : 'افزودن مقاله جدید' ?></h3>
@@ -173,8 +170,7 @@ require __DIR__ . '/includes_header.php';
 </div>
 
 <?php else: ?>
-
-  
+<!--  لیست مقالات (Show) -->
 <div class="admin-card">
   <div class="admin-card-head">
     <h3>لیست مقالات (<?= count($articles) ?>)</h3>
@@ -185,12 +181,14 @@ require __DIR__ . '/includes_header.php';
   <div class="table-responsive">
     <table class="data-table">
       <thead>
-        <tr><th>مقاله</th><th>دسته‌بندی</th><th>نویسنده</th><th>تاریخ</th><th>عملیات</th></tr>
+        <tr><th>مقاله</th><th>دسته‌بندی</th><th>نویسنده</th><th>وضعیت</th><th>تاریخ</th><th>عملیات</th></tr>
       </thead>
       <tbody>
         <?php if (empty($articles)): ?>
-        <tr class="empty-row"><td colspan="5">مقاله‌ای یافت نشد.</td></tr>
-        <?php else: foreach ($articles as $a): ?>
+        <tr class="empty-row"><td colspan="6">مقاله‌ای یافت نشد.</td></tr>
+        <?php else: foreach ($articles as $a):
+          $statusLabel = ['pending' => 'در انتظار تایید', 'approved' => 'تاییدشده', 'rejected' => 'رد‌شده'][$a['status']];
+        ?>
         <tr>
           <td>
             <div class="row-title-cell">
@@ -200,6 +198,7 @@ require __DIR__ . '/includes_header.php';
           </td>
           <td><span class="tag"><?= h($a['category']) ?></span></td>
           <td><?= h($a['author']) ?></td>
+          <td><span class="status-badge status-<?= $a['status'] ?>"><?= $statusLabel ?></span></td>
           <td><?= fmt_date($a['created_at']) ?></td>
           <td>
             <div class="row-actions">

@@ -39,8 +39,8 @@
   }
   .stack-card.main { top: 0; right: 30px; z-index: 3; width: 300px; }
   .stack-card.main img { border-radius: var(--radius-sm); height: 150px; width: 100%; object-fit: cover; margin-bottom: 0.8rem; }
-  .stack-card.float-1 { bottom: 30px; right: 0; z-index: 2; width: 240px; transform: rotate(-3deg); }
-  .stack-card.float-2 { top: 60px; left: -10px; z-index: 1; width: 210px; transform: rotate(4deg); background: var(--pine); color: var(--cream); }
+  .stack-card.float-1 { bottom: 67px; right: 0; z-index: 10; width: 240px;  }
+  .stack-card.float-2 { top: -44px; left: -10px; z-index: 10; width: 210px;  background: var(--pine); color: var(--cream); }
   .stack-card .progress-ring { display: flex; align-items: center; gap: 0.8rem; }
   .ring {
     width: 46px; height: 46px; border-radius: 50%;
@@ -124,7 +124,29 @@
   .cta-band h2 { color: var(--cream); margin-bottom: 0.4rem; }
   .cta-band p { color: rgba(246,241,228,0.7); }
 
-
+  /* در دسکتاپ اسلایدر غیرفعال است؛ همان چیدمان شبکه‌ای معمولی باقی می‌ماند */
   .slider-arrow, .slider-dots { display: none; }
   .slider-track { overflow-x: visible; }
+
+  /* کارت‌های رتبه‌بندی اساتید در صفحه اصلی */
+  .teacher-rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); }
+  .teacher-rank-body { padding: var(--space-md); position: relative; z-index: 2; padding-right: calc(var(--space-md) + 14px); }
+  .teacher-rank-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .teacher-rank-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--sage); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.05rem;
+  }
+  .teacher-rank-body h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .teacher-rank-stats {
+    display: flex; justify-content: space-between;
+    margin: var(--space-sm) 0; padding: 0.7rem 0;
+    border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+  }
+  .teacher-rank-stats > div { text-align: center; }
+  .teacher-rank-stats b { display: block; font-family: var(--font-display); font-size: 1.15rem; color: var(--pine); }
+  .teacher-rank-stats span { font-size: 0.75rem; color: var(--ink-soft); }
+  .teacher-rank-score { display: flex; justify-content: space-between; align-items: center; }
+  .teacher-rank-score .star { color: var(--saffron-dark); font-weight: 700; }
 }

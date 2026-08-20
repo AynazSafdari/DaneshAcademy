@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $id = (int) ($_GET['id'] ?? 0);
-$stmt = $pdo->prepare("SELECT * FROM articles WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM articles WHERE id = ? AND status = 'approved'");
 $stmt->execute([$id]);
 $article = $stmt->fetch();
 
@@ -14,15 +14,20 @@ $page_title = $article ? $article['title'] : 'مقاله یافت نشد';
 
 $related = [];
 if ($article) {
-    $stmt = $pdo->prepare("SELECT * FROM articles WHERE id != ? AND category = ? ORDER BY created_at DESC LIMIT 3");
+    $stmt = $pdo->prepare("SELECT * FROM articles WHERE id != ? AND category = ? AND status = 'approved' ORDER BY created_at DESC LIMIT 3");
     $stmt->execute([$article['id'], $article['category']]);
     $related = $stmt->fetchAll();
 
     if (count($related) < 3) {
-        $stmt = $pdo->prepare("SELECT * FROM articles WHERE id != ? ORDER BY created_at DESC LIMIT 3");
+        $stmt = $pdo->prepare("SELECT * FROM articles WHERE id != ? AND status = 'approved' ORDER BY created_at DESC LIMIT 3");
         $stmt->execute([$article['id']]);
         $related = $stmt->fetchAll();
     }
+}
+
+$userBookmarked = false;
+if ($article && is_logged_in() && $_SESSION['user']['role'] === 'student') {
+    $userBookmarked = is_bookmarked($pdo, (int) $_SESSION['user']['id'], 'article', $article['id']);
 }
 
 require __DIR__ . '/includes/header.php';
@@ -47,9 +52,17 @@ require __DIR__ . '/includes/header.php';
       <div class="article-meta-row">
         <div class="avatar"><?= h(mb_substr($article['author'], -1)) ?></div>
         <div>
+          <?php if (!empty($article['teacher_id'])): ?>
+          <a href="teacher-profile.php?id=<?= (int)$article['teacher_id'] ?>" class="u-color-pine-block u-fw-700"><?= h($article['author']) ?></a>
+          <?php else: ?>
           <strong class="u-color-pine-block"><?= h($article['author']) ?></strong>
+          <?php endif; ?>
           <span><?= fmt_date($article['created_at']) ?></span>
         </div>
+        <button type="button" class="btn btn-outline btn-sm bookmark-btn u-inline-bookmark" data-content-type="article" data-content-id="<?= (int)$article['id'] ?>" data-bookmarked="<?= $userBookmarked ? '1' : '0' ?>">
+          <i class="<?= $userBookmarked ? 'fa-solid' : 'fa-regular' ?> fa-bookmark bookmark-icon"></i>
+          <span class="bookmark-label"><?= $userBookmarked ? 'نشان‌شده' : 'نشان‌کردن' ?></span>
+        </button>
       </div>
       <img class="article-hero-img" src="<?= h($article['image']) ?>" alt="<?= h($article['title']) ?>">
       <div class="article-body">

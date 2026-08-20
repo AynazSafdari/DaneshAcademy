@@ -1,0 +1,23 @@
+{
+  "name": "daneshacademy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AynazSafdari/DaneshAcademy.git"
+  },
+  "author": "Aynaz Safdari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AynazSafdari/DaneshAcademy/issues"
+  },
+  "homepage": "https://github.com/AynazSafdari/DaneshAcademy#readme",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "swiper": "^12.2.0"
+  }
+}

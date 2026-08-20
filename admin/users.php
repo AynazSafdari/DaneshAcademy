@@ -1,5 +1,5 @@
 <?php
-$page_title = 'کاربران ثبت‌نام‌شده';
+$page_title = 'دانشجویان ثبت‌نام‌شده';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_admin('login.php');
@@ -33,7 +33,7 @@ require __DIR__ . '/includes_header.php';
 
 <div class="admin-card">
   <div class="admin-card-head">
-    <h3>لیست کاربران (<?= count($users) ?>)</h3>
+    <h3>لیست دانشجویان (<?= count($users) ?>)</h3>
     <form method="get">
       <input type="text" class="table-search" name="q" value="<?= h($search) ?>" placeholder="جستجو در کاربران...">
     </form>

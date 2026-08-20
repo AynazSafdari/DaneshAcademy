@@ -30,8 +30,22 @@ $current_admin_page = basename($_SERVER['PHP_SELF']);
   <nav class="admin-nav">
     <a href="dashboard.php" class="<?= $current_admin_page === 'dashboard.php' ? 'active' : '' ?>"><span class="ic">📊</span> داشبورد</a>
     <a href="courses.php" class="<?= $current_admin_page === 'courses.php' ? 'active' : '' ?>"><span class="ic">🎓</span> مدیریت دوره‌ها</a>
+    <a href="categories.php" class="<?= $current_admin_page === 'categories.php' ? 'active' : '' ?>"><span class="ic">🗂️</span> دسته‌بندی‌ها</a>
     <a href="articles.php" class="<?= $current_admin_page === 'articles.php' ? 'active' : '' ?>"><span class="ic">📝</span> مدیریت مقالات</a>
-    <a href="users.php" class="<?= $current_admin_page === 'users.php' ? 'active' : '' ?>"><span class="ic">👥</span> کاربران</a>
+    <a href="teachers.php" class="<?= $current_admin_page === 'teachers.php' ? 'active' : '' ?>">
+      <span class="ic">🧑</span> اساتید و تایید محتوا
+      <?php
+        $pendingCountForBadge = (int) $pdo->query("SELECT
+          (SELECT COUNT(*) FROM courses WHERE status='pending') +
+          (SELECT COUNT(*) FROM articles WHERE status='pending') +
+          (SELECT COUNT(*) FROM users WHERE role='teacher' AND status='pending')
+        ")->fetchColumn();
+      ?>
+      <?php if ($pendingCountForBadge > 0): ?>
+        <span class="nav-pending-badge"><?= $pendingCountForBadge ?></span>
+      <?php endif; ?>
+    </a>
+    <a href="users.php" class="<?= $current_admin_page === 'users.php' ? 'active' : '' ?>"><span class="ic">👥</span> دانشجویان</a>
     <a href="messages.php" class="<?= $current_admin_page === 'messages.php' ? 'active' : '' ?>"><span class="ic">✉️</span> پیام‌های تماس</a>
   </nav>
   <div class="admin-sidebar-footer">
